@@ -13,25 +13,25 @@ def apply_birdseye_view_to_live_feed():
 
    
     pts1 = np.float32([
-        [0, 1080],      # Bottom-left
-        [1920, 1080],   # Bottom-right
-        [1632, 648],    # Top-right
-        [288, 648]      # Top-left
+        [0, 1080],      # BL
+        [1920, 1080],   # BR
+        [1632, 648],    # TR
+        [288, 648]      #TL
     ])
 
    
     pts2 = np.float32([
-        [0, output_height],          # Bottom-left
-        [output_width, output_height], # Bottom-right
-        [output_width, 0],            # Top-right
-        [0, 0]                        # Top-left
+        [0, output_height],         
+        [output_width, output_height], 
+        [output_width, 0],            
+        [0, 0]                      
     ])
 
     
     M = cv2.getPerspectiveTransform(pts1, pts2)
 
     while True:
-        # Capture frame-by-frame
+       
         ret, frame = cap.read()
         if not ret:
             print("Error: Failed to capture frame from webcam.")
@@ -60,7 +60,7 @@ def apply_birdseye_view_to_live_feed():
 
         
         key = cv2.waitKey(1) & 0xFF
-        if key == 27:  # ESC key
+        if key == 27: 
             break
 
    
