@@ -36,24 +36,31 @@ def determine_direction(lines, img_width):
     
     left_lines = []
     right_lines = []
-    slopes = []
+    left_slopes = []
+    right_slopes = []
 
     for line in lines:
         for x1, y1, x2, y2 in line:
             slope = (y2 - y1) / (x2 - x1 + 1e-6)  # Avoid division by zero
-            slopes.append(slope)
-            if slope > 0:
+            if slope > 0 and x1 < img_width / 2 and x2 < img_width / 2:
                 left_lines.append(line)
-            else:
+                left_slopes.append(slope)
+            elif slope < 0 and x1 > img_width / 2 and x2 > img_width / 2:
                 right_lines.append(line)
-
-    avg_slope = np.mean(slopes)
-    if avg_slope > 0.2:
-        return "Left Turn"
-    elif avg_slope < -0.2:
-        return "Right Turn"
-    else:
+                right_slopes.append(slope)
+    
+    if left_lines and right_lines:
         return "Forward"
+    elif left_lines:
+        avg_left_slope = np.mean(left_slopes)
+        if avg_left_slope > 0.5:  # Adjust the threshold for better sensitivity
+            return "Left Turn"
+    elif right_lines:
+        avg_right_slope = np.mean(right_slopes)
+        if avg_right_slope < -0.5:  # Adjust the threshold for better sensitivity
+            return "Right Turn"
+    
+    return "Unknown"
 
 def process_image(image_path):
     """Process an image to detect lanes and determine direction."""
@@ -90,4 +97,5 @@ def process_image(image_path):
 
 if __name__ == "__main__":
     process_image('path_to_your_image.jpg')
+
 
