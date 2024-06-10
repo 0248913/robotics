@@ -30,25 +30,30 @@ def draw_lines(img, lines, direction_label):
             cv2.putText(img, direction_label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
 def determine_direction(lines, img_width):
-    """Determine the direction based on the position of the lines."""
+    """Determine the direction based on the slopes of the lines."""
+    if lines is None:
+        return "Unknown"
+    
     left_lines = []
     right_lines = []
-    
+    slopes = []
+
     for line in lines:
         for x1, y1, x2, y2 in line:
-            if x1 < img_width / 2 and x2 < img_width / 2:
+            slope = (y2 - y1) / (x2 - x1 + 1e-6)  # Avoid division by zero
+            slopes.append(slope)
+            if slope > 0:
                 left_lines.append(line)
-            elif x1 > img_width / 2 and x2 > img_width / 2:
+            else:
                 right_lines.append(line)
 
-    if left_lines and right_lines:
-        return "Forward"
-    elif left_lines:
-        return "Right Turn"
-    elif right_lines:
+    avg_slope = np.mean(slopes)
+    if avg_slope > 0.2:
         return "Left Turn"
+    elif avg_slope < -0.2:
+        return "Right Turn"
     else:
-        return "Unknown"
+        return "Forward"
 
 def process_image(image_path):
     """Process an image to detect lanes and determine direction."""
@@ -70,7 +75,7 @@ def process_image(image_path):
     roi = region_of_interest(edges, vertices)
     
     # Step 5: Hough Transform
-    lines = hough_lines(roi, 1, np.pi / 180, 15, 100, 50)
+    lines = hough_lines(roi, 1, np.pi / 180, 15, 40, 20)
     
     # Step 6: Determine Direction
     direction = determine_direction(lines, width)
@@ -85,3 +90,4 @@ def process_image(image_path):
 
 if __name__ == "__main__":
     process_image('path_to_your_image.jpg')
+
