@@ -79,10 +79,10 @@ def process_frame(frame):
     
     birdseye = birdseye_view(frame)
     
-    grey = cv2.cvtColor(birdseye, cv2.COLOR_BGR2GRAY)
+    grey = cv2.cvtColor(birdseye, cv2.COLOR_BGR2grey)
     
 
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    blur = cv2.GaussianBlur(grey, (5, 5), 0)
     
 
     edges = cv2.Canny(blur, 50, 150)
