@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
-def apply_birdseye_view(image_path):
+def imageBEV(imagePath):
    
-    frame = cv2.imread(image_path)
+    frame = cv2.imread(imagePath)
     if frame is None:
         print("Error: Could not load image.")
         return
@@ -40,6 +40,6 @@ def apply_birdseye_view(image_path):
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    image_path = 'captured_image.jpg'  
-    apply_birdseye_view(image_path)
+    imagePath = 'captured_image.jpg'  
+    imageBEV(imagePath)
 
